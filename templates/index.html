@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Art gallery</title>
+</head>
+
+<body>
+  <h1>Art gallery</h1>
+
+  {% if session.username %}
+  <p>
+    Signed in as {{ session.username }}
+  </p>
+  {% endif %}
+
+  <p>
+    <a href="/login">Sign in</a>
+    <a href="/register">Sign up</a>
+    <a href="/logout">Sign out</a>
+  </p>
+</body>
+
+</html>

@@ -16,18 +16,18 @@
 
 install the Flask library:
 
-'''
+```
 $ pip install flask
-'''
+```
 
 create the database table and load the intial data:
 
-'''
+```
 $ sqlite3 database.db < schema.sql
-'''
+```
 
 start the application:
 
-'''
+```
 $ flask run
-'''
+```

@@ -9,10 +9,18 @@ def get_posts():
     return db.query(sql)
 
 def get_post(post_id):
-    sql = """SELECT posts.title,
+    sql = """SELECT posts.id,
+                    posts.title,
                     posts.description,
-                    users.username
+                    users.username,
+                    users.id user_id
              FROM posts, users
              WHERE posts.user_id = users.id AND
                    posts.id = ?"""
     return db.query(sql, [post_id])[0]
+
+def update_post(post_id, title, description):
+    sql = """UPDATE posts SET title = ?,
+                              description = ?
+                          WHERE id = ?"""
+    db.execute(sql, [title, description, post_id])

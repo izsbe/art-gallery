@@ -4,7 +4,7 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
-import items
+import posts
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -14,17 +14,17 @@ def index():
 
     return render_template("index.html")
 
-@app.route("/new_item")
-def new_item():
-    return render_template("new_item.html")
+@app.route("/new_post")
+def new_post():
+    return render_template("new_post.html")
 
-@app.route("/create_item", methods=["POST"])
-def create_item():
+@app.route("/create_post", methods=["POST"])
+def create_post():
     title = request.form["title"]
     description = request.form["description"]
     user_id = session["user_id"]
 
-    items.add_item(title, description, user_id)
+    posts.add_post(title, description, user_id)
 
     return redirect("/")
 

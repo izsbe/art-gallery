@@ -48,6 +48,20 @@ def update_post():
 
     return redirect("/post/" + str(post_id))
 
+@app.route("/remove_post/<int:post_id>", methods=["GET", "POST"])
+def remove_post(post_id):
+    if request.method == "GET":
+        post = posts.get_post(post_id)
+        return render_template("remove_post.html", post=post)
+
+    if request.method == "POST":
+        if "remove" in request.form:
+            posts.remove_post(post_id)
+            return redirect("/")
+        else:
+            return redirect("/post/" + str(post_id))
+
+
 @app.route("/register")
 def register():
     return render_template("register.html")
@@ -60,7 +74,6 @@ def create():
     if password1 != password2:
         return "Passwords do not match"
     password_hash = generate_password_hash(password1)
-
     try:
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])

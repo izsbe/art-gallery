@@ -10,6 +10,7 @@
   {% if session.user_id == post.user_id %}
   <p>
     <a href="/edit_post/{{ post.id }}">Edit</a>
+    <a href="/remove_post/{{ post.id }}">Remove</a>
   </p>
   {% endif %}
   <p>

@@ -12,16 +12,20 @@
   <p>
     Signed in as {{ session.username }}, your id-number is {{session.user_id}}
   </p>
-  {% endif %}
-
+  <p>
+    <a href="/logout">Sign out</a>
+  </p>
+  <p>
+    <a href="/new_post">New post</a>
+  </p>
+  {% else %}
   <p>
     <a href="/login">Sign in</a>
     <a href="/register">Sign up</a>
-    <a href="/logout">Sign out</a>
   </p>
+  {% endif %}
 
-   <p>
-    <a href="/new_post">New post</a>
+  <p>
     <a href="/find_post">Search</a>
   </p>
 

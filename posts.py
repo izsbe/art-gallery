@@ -17,7 +17,8 @@ def get_post(post_id):
              FROM posts, users
              WHERE posts.user_id = users.id AND
                    posts.id = ?"""
-    return db.query(sql, [post_id])[0]
+    result = db.query(sql, [post_id])
+    return result[0] if result else None
 
 def update_post(post_id, title, description):
     sql = """UPDATE posts SET title = ?,

@@ -27,6 +27,8 @@ def find_post():
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
     post = posts.get_post(post_id)
+    if not post:
+        abort(404)
     return render_template("show_post.html", post=post)
 
 @app.route("/new_post")
@@ -46,6 +48,8 @@ def create_post():
 @app.route("/edit_post/<int:post_id>")
 def edit_post(post_id):
     post = posts.get_post(post_id)
+    if not post:
+        abort(404)
     if post["user_id"] != session["user_id"]:
         abort(403)
     return render_template("edit_post.html", post=post)
@@ -54,6 +58,8 @@ def edit_post(post_id):
 def update_post():
     post_id = request.form["post_id"]
     post = posts.get_post(post_id)
+    if not post:
+        abort(404)
     if post["user_id"] != session["user_id"]:
         abort(403)
 
@@ -67,6 +73,8 @@ def update_post():
 @app.route("/remove_post/<int:post_id>", methods=["GET", "POST"])
 def remove_post(post_id):
     post = posts.get_post(post_id)
+    if not post:
+        abort(404)
     if post["user_id"] != session["user_id"]:
         abort(403)
 

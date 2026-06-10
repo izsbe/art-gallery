@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Find post</title>
+</head>
+
+<body>
+  <h1>Find post</h1>
+
+  <form action="/find_post" method="get">
+    <p> 
+      Search for: <input type="text" name="query" value="{{ query }}">
+    </p>
+    <input type="submit" value="Search">
+  </form>
+
+  <p>
+    <a href="/">Back</a>
+  </p>
+
+  {% if query %}
+  <h2>Results</h2>
+
+  <ul>
+    {% for post in results %}
+    <li><a href="/post/{{ post.id }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</body>
+
+</html>

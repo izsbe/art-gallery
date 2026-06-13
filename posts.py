@@ -1,8 +1,18 @@
 import db
 
-def add_post(title, description, user_id):
+def add_post(title, description, user_id, categorys):
     sql = """INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?)"""
     db.execute(sql, [title, description, user_id])
+
+    post_id = db.last_insert_id()
+
+    sql = "INSERT INTO post_categorys (post_id, title, value) VALUES (?, ?, ?)"
+    for title, value in categorys:
+        db.execute(sql, [post_id, title, value])
+
+def get_categorys(post_id):
+    sql = "SELECT title, value FROM post_categorys WHERE post_id = ?"
+    return db.query(sql, [post_id])
 
 def get_posts():
     sql = "SELECT id, title FROM posts ORDER BY id DESC"

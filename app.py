@@ -41,7 +41,8 @@ def show_post(post_id):
     post = posts.get_post(post_id)
     if not post:
         abort(404)
-    return render_template("show_post.html", post=post)
+    categorys = posts.get_categorys(post_id)
+    return render_template("show_post.html", post=post, categorys=categorys)
 
 @app.route("/new_post")
 def new_post():
@@ -60,7 +61,12 @@ def create_post():
         abort(403)
     user_id = session["user_id"]
 
-    posts.add_post(title, description, user_id)
+    categorys = []
+    art_form = request.form["art form"]
+    if art_form:
+        categorys.append(("Art form", art_form))
+
+    posts.add_post(title, description, user_id, categorys)
 
     return redirect("/")
 

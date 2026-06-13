@@ -10,3 +10,10 @@ CREATE TABLE posts (
     description TEXT,
     user_id INTEGER REFERENCES users
 );
+
+CREATE TABLE post_categorys (
+    id INTEGER PRIMARY KEY,
+    post_id INTEGER REFERENCES posts,
+    title TEXT,
+    value TEXT
+);

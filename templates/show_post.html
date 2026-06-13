@@ -19,6 +19,16 @@
   <p>
     Poster: <a href="/user/{{post.user_id}}">{{ post.username }}</a>
   </p>
+  {% if categorys %}
+  <p>
+    Art form:
+    <ul>
+      {% for category in categorys %}
+      <li>{{ category.title }}: {{ category.value }}</li>
+      {% endfor %}
+    </ul>
+  </p>
+  {% endif %}
   <p>
     <a href="/">Back</a>
   </p>

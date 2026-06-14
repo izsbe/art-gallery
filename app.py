@@ -5,9 +5,14 @@ import config
 import db
 import posts
 import users
+import secrets
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+def check_csrf():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
 
 def require_login():
     if "user_id" not in session:
@@ -53,6 +58,7 @@ def new_post():
 @app.route("/create_post", methods=["POST"])
 def create_post():
     require_login()
+    check_csrf()
 
     title = request.form["title"]
     if not title or len(title) > 50:
@@ -95,6 +101,7 @@ def edit_post(post_id):
 @app.route("/update_post", methods=["POST"])
 def update_post():
     require_login()
+    check_csrf()
     post_id = request.form["post_id"]
     post = posts.get_post(post_id)
     if not post:
@@ -121,9 +128,11 @@ def update_post():
 @app.route("/remove_post/<int:post_id>", methods=["GET", "POST"])
 def remove_post(post_id):
     require_login()
+
     post = posts.get_post(post_id)
     if not post:
         abort(404)
+
     if post["user_id"] != session["user_id"]:
         abort(403)
 
@@ -131,11 +140,13 @@ def remove_post(post_id):
         return render_template("remove_post.html", post=post)
 
     if request.method == "POST":
+        check_csrf()
+
         if "remove" in request.form:
             posts.remove_post(post_id)
             return redirect("/")
-        else:
-            return redirect("/post/" + str(post_id))
+
+        return redirect("/post/" + str(post_id))
 
 
 @app.route("/register")
@@ -170,6 +181,7 @@ def login():
         user_id = users.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
+            session["csrf_token"] = secrets.token_hex(16)
             session["username"] = username
             return redirect("/")
         else:

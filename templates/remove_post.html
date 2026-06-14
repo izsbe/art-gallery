@@ -9,11 +9,12 @@
   <h1>Remove post</h1>
   <p>Remove "{{ post.title }}"?</p>
   <form action="/remove_post/{{ post.id }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" name=remove value="Remove">
     <input type="submit" name=back value="Back">
   </form>
   <p>
-    <a href="/">Back</a>
+    <a href="/">Front page</a>
   </p>
 </body>
 

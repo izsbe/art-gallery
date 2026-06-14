@@ -11,7 +11,13 @@ CREATE TABLE posts (
     user_id INTEGER REFERENCES users
 );
 
-CREATE TABLE post_categorys (
+CREATE TABLE categories (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    value TEXT
+);
+
+CREATE TABLE post_categories (
     id INTEGER PRIMARY KEY,
     post_id INTEGER REFERENCES posts,
     title TEXT,

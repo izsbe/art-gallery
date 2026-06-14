@@ -41,13 +41,14 @@ def show_post(post_id):
     post = posts.get_post(post_id)
     if not post:
         abort(404)
-    categorys = posts.get_categorys(post_id)
-    return render_template("show_post.html", post=post, categorys=categorys)
+    categories = posts.get_categories(post_id)
+    return render_template("show_post.html", post=post, categories=categories)
 
 @app.route("/new_post")
 def new_post():
     require_login()
-    return render_template("new_post.html")
+    categories = posts.get_all_categories()
+    return render_template("new_post.html", categories=categories)
 
 @app.route("/create_post", methods=["POST"])
 def create_post():
@@ -61,12 +62,13 @@ def create_post():
         abort(403)
     user_id = session["user_id"]
 
-    categorys = []
-    art_form = request.form["art form"]
-    if art_form:
-        categorys.append(("Art form", art_form))
+    categories = []
+    for entry in request.form.getlist("categories"):
+        if entry:
+            parts = entry.split(":")
+            categories.append((parts[0], parts[1]))
 
-    posts.add_post(title, description, user_id, categorys)
+    posts.add_post(title, description, user_id, categories)
 
     return redirect("/")
 

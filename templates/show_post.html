@@ -21,12 +21,7 @@
   </p>
   {% if categories %}
   <p>
-    Art form:
-    <ul>
-      {% for category in categories %}
-      <li>{{ category.title }}: {{ category.value }}</li>
-      {% endfor %}
-    </ul>
+    Art form: {{ categories[0].value }}
   </p>
   {% endif %}
   <p>

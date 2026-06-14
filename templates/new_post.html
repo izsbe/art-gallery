@@ -16,17 +16,17 @@
       Description: <br />
       <textarea name="description" rows="6" cols="60" maxlength="1000" required></textarea>
     </p>
-    {% for category in categories %}
+
     <p>
-      {{ category }}: <br />
-      <select name="">
-        <option value="">(valitse)</option>
-      {% for option in categories[category] %}
-        <option value="{{category}}:{{ option }}">{{ option }}</option>
+      Art form: <br />
+      <select name="category">
+        <option value="">(select)</option>
+      {% for option in categories %}
+        <option value="{{ option }}">{{ option }}</option>
       {% endfor %}
       </select>
     </p>
-    {% endfor %}
+
     <input type="submit" value="Post artwork" />
   </form>
   <p>

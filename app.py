@@ -60,15 +60,13 @@ def create_post():
     description = request.form["description"]
     if not description or len(description) > 1000:
         abort(403)
+    category = request.form["category"]
+    if not category:
+        abort(403)
+
     user_id = session["user_id"]
 
-    categories = []
-    for entry in request.form.getlist("categories"):
-        if entry:
-            parts = entry.split(":")
-            categories.append((parts[0], parts[1]))
-
-    posts.add_post(title, description, user_id, categories)
+    posts.add_post(title, description, user_id, category)
 
     return redirect("/")
 

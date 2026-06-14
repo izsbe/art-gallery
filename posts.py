@@ -1,26 +1,23 @@
 import db
 
 def get_all_categories():
-    sql = "SELECT title, value FROM categories ORDER BY id"
+    sql = "SELECT value FROM categories ORDER BY id"
     result = db.query(sql)
 
-    categories = {}
-    for title, value in result:
-        categories[title] = []
-    for title, value in result:
-        categories[title].append(value)
+    categories = []
+    for row in result:
+        categories.append(row["value"])
 
     return categories
 
-def add_post(title, description, user_id, categories):
+def add_post(title, description, user_id, category):
     sql = """INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?)"""
     db.execute(sql, [title, description, user_id])
 
     post_id = db.last_insert_id()
 
-    sql = "INSERT INTO post_categories (post_id, title, value) VALUES (?, ?, ?)"
-    for title, value in categories:
-        db.execute(sql, [post_id, title, value])
+    sql = """INSERT INTO post_categories (post_id, title, value) VALUES (?, ?, ?)"""
+    db.execute(sql, [post_id, "Art form", category])
 
 def get_categories(post_id):
     sql = "SELECT title, value FROM post_categories WHERE post_id = ?"

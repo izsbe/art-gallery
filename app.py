@@ -57,10 +57,15 @@ def create_post():
     title = request.form["title"]
     if not title or len(title) > 50:
         abort(403)
+
     description = request.form["description"]
     if not description or len(description) > 1000:
         abort(403)
+
+    all_categories = posts.get_all_categories()
     category = request.form["category"]
+    if category not in all_categories:
+        abort(403)
 
     user_id = session["user_id"]
 
@@ -103,7 +108,11 @@ def update_post():
     description = request.form["description"]
     if not description or len(description) > 1000:
         abort(403)
+
+    all_categories = posts.get_all_categories()
     category = request.form["category"]
+    if category not in all_categories:
+        abort(403)
 
     posts.update_post(post_id, title, description, category)
 

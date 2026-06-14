@@ -52,6 +52,8 @@ def update_post(post_id, title, description, category):
     db.execute(sql, [post_id, "Art form", category])
 
 def remove_post(post_id):
+    sql = "DELETE FROM post_categories WHERE post_id = ?"
+    db.execute(sql, [post_id])
     sql = "DELETE FROM posts WHERE id = ?"
     db.execute(sql, [post_id])
 

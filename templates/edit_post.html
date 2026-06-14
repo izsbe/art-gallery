@@ -16,6 +16,19 @@
       Description: <br />
       <textarea name="description" rows="6" cols="60" maxlength="1000" required>{{ post.description }}</textarea>
     </p>
+    <p>
+      Art form: <br />
+      <select name="category">
+        <option value="">(select)</option>
+        {% for option in all_categories %}
+          {% if category == option %}
+            <option value="{{ option }}" selected>{{ option }}</option>
+          {% else %}
+            <option value="{{ option }}">{{ option }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </p>
     <input type="hidden" name="post_id" value="{{ post.id }}" />
     <input type="submit" value="Update Post" />
   </form>

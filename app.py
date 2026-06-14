@@ -61,8 +61,6 @@ def create_post():
     if not description or len(description) > 1000:
         abort(403)
     category = request.form["category"]
-    if not category:
-        abort(403)
 
     user_id = session["user_id"]
 
@@ -78,7 +76,16 @@ def edit_post(post_id):
         abort(404)
     if post["user_id"] != session["user_id"]:
         abort(403)
-    return render_template("edit_post.html", post=post)
+
+    categories= posts.get_categories(post_id)
+    category = ""
+
+    if categories:
+        category = categories[0]["value"]
+
+    all_categories = posts.get_all_categories()
+
+    return render_template("edit_post.html", post=post, category=category, all_categories=all_categories)
 
 @app.route("/update_post", methods=["POST"])
 def update_post():
@@ -96,8 +103,9 @@ def update_post():
     description = request.form["description"]
     if not description or len(description) > 1000:
         abort(403)
+    category = request.form["category"]
 
-    posts.update_post(post_id, title, description)
+    posts.update_post(post_id, title, description, category)
 
     return redirect("/post/" + str(post_id))
 

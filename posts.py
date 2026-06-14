@@ -39,11 +39,17 @@ def get_post(post_id):
     result = db.query(sql, [post_id])
     return result[0] if result else None
 
-def update_post(post_id, title, description):
+def update_post(post_id, title, description, category):
     sql = """UPDATE posts SET title = ?,
                               description = ?
                           WHERE id = ?"""
     db.execute(sql, [title, description, post_id])
+
+    sql = "DELETE FROM post_categories WHERE post_id = ?"
+    db.execute(sql, [post_id])
+
+    sql = """INSERT INTO post_categories (post_id, title, value) VALUES (?, ?, ?)"""
+    db.execute(sql, [post_id, "Art form", category])
 
 def remove_post(post_id):
     sql = "DELETE FROM posts WHERE id = ?"

@@ -24,6 +24,7 @@ create the database table and load the intial data:
 
 ```
 $ sqlite3 database.db < schema.sql
+$ sqlite3 database.db < init.sql
 ```
 
 start the application:

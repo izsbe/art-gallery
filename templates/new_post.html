@@ -18,13 +18,16 @@
     </p>
 
     <p>
-      Art form: <br />
-      <select name="category">
-        <option value="">(select)</option>
-      {% for option in categories %}
-        <option value="{{ option }}">{{ option }}</option>
+      Art form: <br>
+      {% for category in categories %}
+        <label>
+          <input
+            type="checkbox"
+            name="categories"
+            value="{{ category.id }}">
+          {{ category.name }}
+        </label><br>
       {% endfor %}
-      </select>
     </p>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Post artwork" />

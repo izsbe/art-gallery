@@ -68,14 +68,13 @@ def create_post():
     if not description or len(description) > 1000:
         abort(403)
 
-    all_categories = posts.get_all_categories()
-    category = request.form["category"]
-    if category not in all_categories:
+    selected_categories = request.form.getlist("categories")
+    if not selected_categories:
         abort(403)
 
     user_id = session["user_id"]
 
-    posts.add_post(title, description, user_id, category)
+    posts.add_post(title, description, user_id, selected_categories)
 
     return redirect("/")
 
@@ -88,15 +87,15 @@ def edit_post(post_id):
     if post["user_id"] != session["user_id"]:
         abort(403)
 
-    categories= posts.get_categories(post_id)
-    category = ""
-
-    if categories:
-        category = categories[0]["value"]
-
+    selected_categories = posts.get_categories(post_id)
     all_categories = posts.get_all_categories()
 
-    return render_template("edit_post.html", post=post, category=category, all_categories=all_categories)
+    return render_template(
+        "edit_post.html",
+        post=post,
+        selected_categories=selected_categories,
+        all_categories=all_categories
+        )
 
 @app.route("/update_post", methods=["POST"])
 def update_post():
@@ -117,12 +116,16 @@ def update_post():
     if not description or len(description) > 1000:
         abort(403)
 
-    all_categories = posts.get_all_categories()
-    category = request.form["category"]
-    if category not in all_categories:
+    selected_categories = request.form.getlist("categories")
+    if not selected_categories:
         abort(403)
 
-    posts.update_post(post_id, title, description, category)
+    posts.update_post(
+        post_id,
+        title,
+        description,
+        selected_categories
+        )
 
     return redirect("/post/" + str(post_id))
 

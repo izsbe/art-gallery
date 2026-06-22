@@ -18,6 +18,6 @@ CREATE TABLE categories (
 
 CREATE TABLE post_categories (
     post_id INTEGER REFERENCES posts,
-    catecory_id INTEGER REFERENCES categories,
-    PRIMARY KEY (post_id, catecory_id)
+    category_id INTEGER REFERENCES categories,
+    PRIMARY KEY (post_id, category_id)
 );

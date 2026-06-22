@@ -2,7 +2,7 @@ import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, request, session
 import config
-import db
+#import db
 import posts
 import users
 import secrets
@@ -102,6 +102,7 @@ def edit_post(post_id):
 def update_post():
     require_login()
     check_csrf()
+
     post_id = request.form["post_id"]
     post = posts.get_post(post_id)
     if not post:
@@ -185,7 +186,7 @@ def login():
             session["username"] = username
             return redirect("/")
         else:
-            return "Incorrect username or password"
+            return "Incorrect username or/and password"
 
 @app.route("/logout")
 def logout():

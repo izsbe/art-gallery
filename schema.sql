@@ -13,13 +13,11 @@ CREATE TABLE posts (
 
 CREATE TABLE categories (
     id INTEGER PRIMARY KEY,
-    title TEXT,
-    value TEXT
+    name TEXT
 );
 
 CREATE TABLE post_categories (
-    id INTEGER PRIMARY KEY,
     post_id INTEGER REFERENCES posts,
-    title TEXT,
-    value TEXT
+    catecory_id INTEGER REFERENCES categories,
+    PRIMARY KEY (post_id, catecory_id)
 );

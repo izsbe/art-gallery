@@ -17,6 +17,17 @@ def add_post(title, description, user_id, categories):
         db.execute(sql, [post_id, category_id])
 
 
+def add_comment(post_id, user_id, comment):
+    sql = "INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)"
+    db.execute(sql, [post_id, user_id, comment])
+
+def get_comments(post_id):
+    sql = """SELECT comments.content, users.id user_id, users.username
+             FROM comments, users
+             WHERE comments.post_id = ? AND comments.user_id = users.id
+             ORDER BY comments.id DESC"""
+    return db.query(sql, [post_id])
+
 def get_categories(post_id):
     sql = """SELECT categories.id,
                     categories.name

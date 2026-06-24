@@ -9,6 +9,7 @@ CREATE TABLE posts (
     title TEXT,
     description TEXT,
     created_at TEXT,
+    image BLOB,
     user_id INTEGER REFERENCES users
 );
 

@@ -14,11 +14,12 @@
   </p>
   {% endif %}
   <p>
-    {{ post.description }}
-  </p>
-  <p>
     Posted by: <a href="/user/{{post.user_id}}">{{ post.username }}</a> <br />
     ({{ post.created_at }})
+  </p>
+  <img src="/image/{{ post.id }}" width="500"/>
+  <p>
+    {{ post.description }}
   </p>
 
   {% if categories %}

@@ -5,11 +5,10 @@ def get_all_categories():
     sql = "SELECT id, name FROM categories ORDER BY name"
     return db.query(sql)
 
-
-def add_post(title, description, user_id, categories):
+def add_post(title, description, user_id, categories, image):
     created_at = datetime.now().strftime("%d/%m/%Y, %H:%M")
-    sql = "INSERT INTO posts (title, description, created_at, user_id) VALUES (?, ?, ?, ?)"
-    db.execute(sql, [title, description, created_at, user_id])
+    sql = "INSERT INTO posts (title, description, created_at, image, user_id) VALUES (?, ?, ?, ?, ?)"
+    db.execute(sql, [title, description, created_at, image,  user_id])
 
     post_id = db.last_insert_id()
 
@@ -18,6 +17,14 @@ def add_post(title, description, user_id, categories):
     for category_id in categories:
         db.execute(sql, [post_id, category_id])
 
+def get_image(post_id):
+    sql = "SELECT image FROM posts WHERE id = ?"
+    result = db.query(sql, [post_id])
+
+    if not result:
+        return None
+
+    return result[0]["image"]
 
 def add_comment(post_id, user_id, comment):
     created_at = datetime.now().strftime("%d/%m/%Y, %H:%M")

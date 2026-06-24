@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session, make_response
 import config
 #import db
 import posts
@@ -66,6 +66,15 @@ def create_post():
     if not title or len(title) > 50:
         abort(403)
 
+    file = request.files["image"]
+    filename = file.filename.lower()
+    if not (filename.endswith(".jpg") or filename.endswith(".jpeg")):
+        return "ERROR: wrong file type"
+
+    image = file.read()
+    if len(image) > 100 * 1024:
+        return "ERROR: image is too large"
+
     description = request.form["description"]
     if not description or len(description) > 1000:
         abort(403)
@@ -76,9 +85,19 @@ def create_post():
 
     user_id = session["user_id"]
 
-    posts.add_post(title, description, user_id, selected_categories)
+    posts.add_post(title, description, user_id, selected_categories, image)
 
     return redirect("/")
+
+@app.route("/image/<int:post_id>")
+def show_image(post_id):
+    image = posts.get_image(post_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
 
 @app.route("/create_comment", methods=["POST"])
 def create_comment():

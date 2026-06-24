@@ -7,10 +7,13 @@
 
 <body>
   <h1>New post</h1>
-  <form action="/create_post" method="post">
+  <form action="/create_post" method="post" enctype="multipart/form-data">
     <p>
       Title: <br />
       <input type="text" name="title" maxlength="50" required/>
+    </p>
+    <p>
+      Artwork image: <input type="file" name="image" accept=".jpg, jpeg" />
     </p>
     <p>
       Description: <br />

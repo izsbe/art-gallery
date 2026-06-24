@@ -98,6 +98,29 @@ def create_comment():
 
     return redirect("/post/" + str(post_id))
 
+@app.route("/edit_comment/<int:comment_id>", methods=["GET", "POST"])
+def edit_comment(comment_id):
+    require_login()
+
+    comment = posts.get_comment(comment_id)
+    if not comment:
+        abort(404)
+    if comment["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("edit_comment.html", comment=comment)
+
+    if request.method == "POST":
+        check_csrf()
+
+        content = request.form["content"]
+        if not comment or len(comment) > 100:
+            abort(403)
+
+        posts.update_comment(comment["id"], content)
+        return redirect("/post/" + str(comment["post_id"]))
+
 @app.route("/edit_post/<int:post_id>")
 def edit_post(post_id):
     require_login()

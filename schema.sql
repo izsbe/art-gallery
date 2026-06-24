@@ -8,6 +8,7 @@ CREATE TABLE posts (
     id INTEGER PRIMARY KEY,
     title TEXT,
     description TEXT,
+    created_at TEXT,
     user_id INTEGER REFERENCES users
 );
 
@@ -15,7 +16,8 @@ CREATE TABLE comments(
     id INTEGER PRIMARY KEY,
     post_id INTEGER REFERENCES posts,
     user_id INTEGER REFERENCES users,
-    content TEXT
+    content TEXT,
+    created_at TEXT
 );
 
 CREATE TABLE categories (

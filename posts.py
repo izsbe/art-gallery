@@ -1,4 +1,5 @@
 import db
+from datetime import datetime
 
 def get_all_categories():
     sql = "SELECT id, name FROM categories ORDER BY name"
@@ -6,8 +7,9 @@ def get_all_categories():
 
 
 def add_post(title, description, user_id, categories):
-    sql = "INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?)"
-    db.execute(sql, [title, description, user_id])
+    created_at = datetime.now().strftime("%d/%m/%Y, %H:%M")
+    sql = "INSERT INTO posts (title, description, created_at, user_id) VALUES (?, ?, ?, ?)"
+    db.execute(sql, [title, description, created_at, user_id])
 
     post_id = db.last_insert_id()
 
@@ -18,15 +20,35 @@ def add_post(title, description, user_id, categories):
 
 
 def add_comment(post_id, user_id, comment):
-    sql = "INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)"
-    db.execute(sql, [post_id, user_id, comment])
+    created_at = datetime.now().strftime("%d/%m/%Y, %H:%M")
+    sql = "INSERT INTO comments (post_id, user_id, content, created_at) VALUES (?, ?, ?, ?)"
+    db.execute(sql, [post_id, user_id, comment, created_at])
 
 def get_comments(post_id):
-    sql = """SELECT comments.content, users.id user_id, users.username
+    sql = """SELECT comments.id,
+                    comments.content,
+                    comments.created_at,
+                    users.id user_id,
+                    users.username
              FROM comments, users
              WHERE comments.post_id = ? AND comments.user_id = users.id
              ORDER BY comments.id DESC"""
     return db.query(sql, [post_id])
+
+def get_comment(comment_id):
+    sql = """SELECT id,
+                    content,
+                    post_id,
+                    user_id
+             FROM comments
+             WHERE id = ?"""
+
+    result = db.query(sql, [comment_id])
+    return result[0] if result else None
+
+def update_comment(comment_id, content):
+    sql = "UPDATE comments SET content = ? WHERE id = ?"
+    db.execute(sql, [content, comment_id])
 
 def get_categories(post_id):
     sql = """SELECT categories.id,
@@ -46,6 +68,7 @@ def get_post(post_id):
     sql = """SELECT posts.id,
                     posts.title,
                     posts.description,
+                    posts.created_at,
                     users.username,
                     users.id user_id
              FROM posts, users

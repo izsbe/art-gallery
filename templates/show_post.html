@@ -17,7 +17,8 @@
     {{ post.description }}
   </p>
   <p>
-    Poster: <a href="/user/{{post.user_id}}">{{ post.username }}</a>
+    Posted by: <a href="/user/{{post.user_id}}">{{ post.username }}</a> <br />
+    ({{ post.created_at }})
   </p>
 
   {% if categories %}
@@ -32,11 +33,25 @@
   {% endif %}
 
   <h2>Discussion</h2>
-  <ul>
-    {% for comment in comments %}
-    <li>{{ comment.content }}, <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>
-    {% endfor %}
-  </ul>
+
+  {% for comment in comments %}
+    <p>
+      <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.created_at }}):
+    </p>
+    <p>
+      {{ comment.content }}
+    </p>
+
+    {% if comment.user_id == session.user_id %}
+    <p>
+      <a href="/edit_comment/{{ comment.id }}">Edit</a> |
+      <a href="/remove_comment/{{ comment.id }}">Delete</a>
+    </p>
+    {% endif %}
+
+    <hr />
+  {% endfor %}
+
   <form action="/create_comment" method="post">
     Add a comment: <br />
     <textarea name="comment" rows="4" cols="40" maxlength="100" required></textarea>

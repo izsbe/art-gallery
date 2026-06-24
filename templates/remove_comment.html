@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Delete comment</title>
+</head>
+
+<body>
+  <form action="/remove_comment/{{ comment.id }}" method="post">
+    <p>
+      "{{ comment.content }}" <br />
+      Are you sure you want to delete the comment?
+    </p>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="submit" name="continue" value="Delete" />
+    <input type="submit" name="cancel" value="Cancel" />
+  </form>
+
+</body>
+</html>

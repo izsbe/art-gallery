@@ -50,6 +50,10 @@ def update_comment(comment_id, content):
     sql = "UPDATE comments SET content = ? WHERE id = ?"
     db.execute(sql, [content, comment_id])
 
+def remove_comment(comment_id):
+    sql = "DELETE FROM comments WHERE id = ?"
+    db.execute(sql, [comment_id])
+
 def get_categories(post_id):
     sql = """SELECT categories.id,
                     categories.name

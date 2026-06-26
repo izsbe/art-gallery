@@ -34,13 +34,23 @@ def show_user(user_id):
 
 @app.route("/find_post")
 def find_post():
-    query = request.args.get("query")
-    if query:
-        results = posts.find_posts(query)
+    query_word = request.args.get("query_word", "")
+    query_category = request.args.get("query_category", "")
+    categories = posts.get_all_categories()
+
+    if len(query_word) > 30:
+            abort(403)
+
+    if query_word or query_category:
+        results = posts.find_posts(query_word, query_category)
     else:
-        query = ""
         results = []
-    return render_template("find_post.html", query=query, results=results)
+
+    return render_template("find_post.html",
+                           query_word=query_word,
+                           query_category=query_category,
+                           categories=categories,
+                           results=results)
 
 @app.route("/post/<int:post_id>")
 def show_post(post_id):

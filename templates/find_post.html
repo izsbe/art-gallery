@@ -10,23 +10,44 @@
 
   <form action="/find_post" method="get">
     <p> 
-      Search for: <input type="text" name="query" value="{{ query }}">
+      Search for:<br>
+      <input type="text" name="query_word" value="{{ query_word }}" size="30" maxlength="30"/>
     </p>
+
+    <p>
+      Art form:<br>
+      <select name="query_category">
+        <option value="">(all art forms)</option>
+        {% for category in categories %}
+          <option value="{{ category.id }}"
+            {% if category.id|string == query_category %}
+              selected
+            {% endif %}>
+            {{ category.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </p>
+
     <input type="submit" value="Search">
   </form>
 
   <p>
-    <a href="/">Back</a>
+    <a href="/">Front page</a>
   </p>
 
-  {% if query %}
-  <h2>Results</h2>
+  {% if query_word or query_category %}
+    <h2>Results</h2>
 
-  <ul>
-    {% for post in results %}
-    <li><a href="/post/{{ post.id }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
+    {% if results == [] %}
+      <p> No matching posts found. </p>
+    {% endif %}
+
+    <ul>
+      {% for post in results %}
+      <li><a href="/post/{{ post.id }}">{{ post.title }}</a></li>
+      {% endfor %}
+    </ul>
   {% endif %}
 </body>
 

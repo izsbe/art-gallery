@@ -109,10 +109,23 @@ def remove_post(post_id):
     sql = "DELETE FROM posts WHERE id = ?"
     db.execute(sql, [post_id])
 
-def find_posts(query):
-    sql = """SELECT id, title
+def find_posts(query_word, query_category):
+    sql = """SELECT DISTINCT posts.id, posts.title
              FROM posts
-             WHERE title LIKE ? OR description LIKE ?
-             ORDER BY id DESC"""
-    like = "%" + query + "%"
-    return db.query(sql, [like, like])
+             LEFT JOIN post_categories ON posts.id = post_categories.post_id
+             WHERE 1=1"""
+
+    params = []
+
+    if query_word:
+        sql += " AND (posts.title LIKE ? OR posts.description LIKE ?)"
+        like = "%" + query_word + "%"
+        params.extend([like, like])
+
+    if query_category:
+        sql += " AND post_categories.category_id = ?"
+        params.append(query_category)
+
+    sql += " ORDER BY posts.id DESC"
+
+    return db.query(sql, params)

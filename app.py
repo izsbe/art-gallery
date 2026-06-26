@@ -29,7 +29,8 @@ def show_user(user_id):
     if not user:
         abort(404)
     posts = users.get_posts(user_id)
-    return render_template("show_user.html", user=user, posts=posts)
+    comments = users.count_comments(user_id)
+    return render_template("show_user.html", user=user, posts=posts, comments=comments)
 
 @app.route("/find_post")
 def find_post():

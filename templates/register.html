@@ -6,19 +6,26 @@
 </head>
 
 <body>
-  <form action="/create" method="post">
+  <form action="/register" method="post">
     <p>
       Username: <br />
-      <input type="text" name="username" />
+      <input type="text" name="username" value="{{ filled.username }}" maxlength="16" pattern="^\S+$" required/>
+      (Username cannot be longer than 16 characters or contain spaces)
     </p>
     <p>
       Password: <br />
-      <input type="password" name="password1" />
+      <input type="password" name="password1" minlength="8" maxlength="30" pattern="^\S+$" required/>
+      (Password must be 8-30 characters long and cannot contain spaces)
     </p>
     <p>
       Confirm password: <br />
-      <input type="password" name="password2" />
+      <input type="password" name="password2" minlength="8" maxlength="30" pattern="^\S+$" required/>
     </p>
+    {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+    {% endfor %}
     <input type="submit" value="Sign up" />
   </form>
 </body>

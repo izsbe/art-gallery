@@ -8,11 +8,15 @@
 <body>
   <h1>Art gallery</h1>
 
+  {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+  {% endfor %}
+
   {% if session.username %}
   <p>
-    Signed in as <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
-  </p>
-  <p>
+    Signed in as <a href="/user/{{ session.user_id }}">{{ session.username }}</a> |
     <a href="/logout">Sign out</a>
   </p>
   <p>
@@ -20,7 +24,7 @@
   </p>
   {% else %}
   <p>
-    <a href="/login">Sign in</a>
+    <a href="/login">Sign in</a> /
     <a href="/register">Sign up</a>
   </p>
   {% endif %}

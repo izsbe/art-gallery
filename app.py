@@ -1,11 +1,12 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session, make_response
+from flask import abort, redirect, render_template, request, session, make_response, flash
 import config
 #import db
 import posts
 import users
 import secrets
+import re
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -246,30 +247,67 @@ def remove_post(post_id):
         return redirect("/post/" + str(post_id))
 
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
+    if request.method == "GET":
+        return render_template("register.html", filled={})
 
-@app.route("/create", methods=["POST"])
-def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    if password1 != password2:
-        return "Passwords do not match"
 
-    try:
-        users.create_user(username, password1)
-    except sqlite3.IntegrityError:
-        return "Username is already taken"
+    if request.method == "POST":
+        username = request.form["username"]
+        filled = {"username": username}
 
-    return "Account created"
+        if not username:
+            flash("Username cannot be empty")
+            return render_template("register.html", filled={})
+
+        if len(username) > 16:
+            flash("Username is too long")
+            return render_template("register.html", filled=filled)
+
+        if not re.search(r'^\S+$', username):
+            flash("Username cannot contain spaces")
+            return render_template("register.html", filled=filled)
+
+        password1 = request.form["password1"]
+
+        if not password1 or len(password1) > 30 or len(password1) < 8:
+            flash("Password does not match requirements")
+            return render_template("register.html", filled=filled)
+
+        if not re.search(r'^\S+$', password1):
+            flash("Password cannot contain spaces")
+            return render_template("register.html", filled=filled)
+
+        password2 = request.form["password2"]
+
+        if not password2 or len(password2) > 30 or len(password2) < 8:
+            flash("Password does not match requirements")
+            return render_template("register.html", filled=filled)
+
+        if not re.search(r'^\S+$', password2):
+            flash("Password cannot contain spaces")
+            return render_template("register.html", filled=filled)
+
+        if password1 != password2:
+            flash("ERROR: Passwords do not match")
+            return render_template("register.html", filled=filled)
+
+        try:
+            users.create_user(username, password1)
+        except sqlite3.IntegrityError:
+            flash("ERROR: Username is already taken")
+            return render_template("register.html", filled={})
+
+        flash("Account created")
+        return redirect("/login?username=" + username)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        filled = { "username": request.args.get("username", "")}
+        return render_template("login.html", filled=filled)
 
     if request.method == "POST":
         username = request.form["username"]
@@ -280,9 +318,12 @@ def login():
             session["user_id"] = user_id
             session["csrf_token"] = secrets.token_hex(16)
             session["username"] = username
+            flash("Sign in successful")
             return redirect("/")
         else:
-            return "Incorrect username or/and password"
+            flash("Incorrect username or/and password")
+            filled = {"username": username}
+            return render_template("login.html", filled=filled)
 
 @app.route("/logout")
 def logout():

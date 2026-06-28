@@ -1,0 +1,74 @@
+body {
+  margin: auto;
+  max-width: 50em;
+  font-family: 'Times New Roman', Times, serif;
+  background-color: #d9d9d9;
+}
+
+header {
+  background-color: rgb(42, 42, 42);
+  color: white;
+  padding: 1em 2em;
+  margin: 0.5em 0;
+}
+
+.nav {
+  background-color: rgb(133, 133, 133);
+  padding: 0.5em;
+  margin: 0.5em 0;
+}
+
+.signed {
+  background-color: #c9c9c9;
+  color: black;
+  padding: 0.5em;
+  margin: 0.5em 0;
+}
+
+.content {
+  background-color: rgb(240, 240, 240);
+  color: black;
+  padding: 1.5em;
+  margin: 0.5em 0;
+}
+
+.info {
+  border: 2px solid black;
+  margin: 1em;
+  padding: 0.5em;
+  background-color: #7b7b7b;
+  color: white;
+}
+
+h1, h2 {
+  margin: 0;
+}
+
+nav {
+  text-align: center;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  display: inline-block;
+  padding: 0 2.5em;
+  margin: 0;
+}
+
+nav li:not(:last-of-type) {
+  border-right: 1px solid black;
+}
+
+nav a {
+  text-decoration: none;
+  color: black;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}

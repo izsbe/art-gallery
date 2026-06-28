@@ -1,18 +1,19 @@
 # Art gallery
 
-## application features
+## Application features
+Art gallery is a web application where users can share their artwork and interact with other artists.
 
-* user will be able to create an account and login to the application.
-* users can post pictures of their art to the application. In addition, users can edit and delete their posts.
-* users can see their own and other users posts added to the application. 
-* users can search posts by keyword.
-* the application has user pages that show posts and stats for each user.
-* users can categorise their posts by one or more criteria (e.g. artform: drawing, painting, etc.)
-* users are able to discuss posts and ideas by commenting.
+* User can create an account and sign in to the application.
+* Users can create posts consisting of an artwork image, a title, a description and one or more art forms.
+* Each post represents a single artwork. The artwork image is uploaded when the post is created and cannot be changed afterwards. If the user wishes to replace the artwork, they can create a new post.
+* Users can edit the title, description and art form selections of their posts, or delete the entire post.
+* Users can browse all artwork shared in the application.
+* Users can search posts by keyword and/or filter the results by category.
+* Each user has a user page displaying their posts with simple statistics.
+* Users can discuss posts and ideas by commenting. They can also edit and delete their own comments.
 
 
-
-## application setup
+## Application setup
 
 install the Flask library:
 

@@ -1,9 +1,5 @@
-import db
 from datetime import datetime
-
-def get_all_categories():
-    sql = "SELECT id, name FROM categories ORDER BY name"
-    return db.query(sql)
+import db
 
 def add_post(title, description, user_id, categories, image):
     created_at = datetime.now().strftime("%d/%m/%Y, %H:%M")
@@ -16,60 +12,6 @@ def add_post(title, description, user_id, categories, image):
 
     for category_id in categories:
         db.execute(sql, [post_id, category_id])
-
-def get_image(post_id):
-    sql = "SELECT image FROM posts WHERE id = ?"
-    result = db.query(sql, [post_id])
-
-    if not result:
-        return None
-
-    return result[0]["image"]
-
-def add_comment(post_id, user_id, comment):
-    created_at = datetime.now().strftime("%d/%m/%Y, %H:%M")
-    sql = "INSERT INTO comments (post_id, user_id, content, created_at) VALUES (?, ?, ?, ?)"
-    db.execute(sql, [post_id, user_id, comment, created_at])
-
-def get_comments(post_id):
-    sql = """SELECT comments.id,
-                    comments.content,
-                    comments.created_at,
-                    users.id user_id,
-                    users.username
-             FROM comments, users
-             WHERE comments.post_id = ? AND comments.user_id = users.id
-             ORDER BY comments.id DESC"""
-    return db.query(sql, [post_id])
-
-def get_comment(comment_id):
-    sql = """SELECT id,
-                    content,
-                    post_id,
-                    user_id
-             FROM comments
-             WHERE id = ?"""
-
-    result = db.query(sql, [comment_id])
-    return result[0] if result else None
-
-def update_comment(comment_id, content):
-    sql = "UPDATE comments SET content = ? WHERE id = ?"
-    db.execute(sql, [content, comment_id])
-
-def remove_comment(comment_id):
-    sql = "DELETE FROM comments WHERE id = ?"
-    db.execute(sql, [comment_id])
-
-def get_categories(post_id):
-    sql = """SELECT categories.id,
-                    categories.name
-             FROM categories, post_categories
-             WHERE categories.id = post_categories.category_id
-                AND post_categories.post_id = ?
-             ORDER BY categories.name"""
-
-    return db.query(sql, [post_id])
 
 def get_posts():
     sql = "SELECT id, title FROM posts ORDER BY id DESC"
@@ -129,3 +71,61 @@ def find_posts(query_word, query_category):
     sql += " ORDER BY posts.id DESC"
 
     return db.query(sql, params)
+
+def get_categories(post_id):
+    sql = """SELECT categories.id,
+                    categories.name
+             FROM categories, post_categories
+             WHERE categories.id = post_categories.category_id
+                AND post_categories.post_id = ?
+             ORDER BY categories.name"""
+
+    return db.query(sql, [post_id])
+
+def get_all_categories():
+    sql = "SELECT id, name FROM categories ORDER BY name"
+    return db.query(sql)
+
+def get_image(post_id):
+    sql = "SELECT image FROM posts WHERE id = ?"
+    result = db.query(sql, [post_id])
+
+    if not result:
+        return None
+
+    return result[0]["image"]
+
+def add_comment(post_id, user_id, comment):
+    created_at = datetime.now().strftime("%d/%m/%Y, %H:%M")
+    sql = "INSERT INTO comments (post_id, user_id, content, created_at) VALUES (?, ?, ?, ?)"
+    db.execute(sql, [post_id, user_id, comment, created_at])
+
+def get_comments(post_id):
+    sql = """SELECT comments.id,
+                    comments.content,
+                    comments.created_at,
+                    users.id user_id,
+                    users.username
+             FROM comments, users
+             WHERE comments.post_id = ? AND comments.user_id = users.id
+             ORDER BY comments.id DESC"""
+    return db.query(sql, [post_id])
+
+def get_comment(comment_id):
+    sql = """SELECT id,
+                    content,
+                    post_id,
+                    user_id
+             FROM comments
+             WHERE id = ?"""
+
+    result = db.query(sql, [comment_id])
+    return result[0] if result else None
+
+def update_comment(comment_id, content):
+    sql = "UPDATE comments SET content = ? WHERE id = ?"
+    db.execute(sql, [content, comment_id])
+
+def remove_comment(comment_id):
+    sql = "DELETE FROM comments WHERE id = ?"
+    db.execute(sql, [comment_id])

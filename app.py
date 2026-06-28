@@ -23,12 +23,6 @@ def check_csrf():
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
-@app.template_filter()
-def show_lines(content):
-    content = str(markupsafe.escape(content))
-    content = content.replace("\n", "<br />")
-    return markupsafe.Markup(content)
-
 @app.route("/")
 def index():
     all_posts = posts.get_posts()
@@ -43,6 +37,22 @@ def show_user(user_id):
     posts = users.get_posts(user_id)
     comments = users.count_comments(user_id)
     return render_template("show_user.html", user=user, posts=posts, comments=comments)
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
+
+@app.route("/image/<int:post_id>")
+def show_image(post_id):
+    image = posts.get_image(post_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
 
 @app.route("/find_post")
 def find_post():
@@ -86,7 +96,6 @@ def new_post():
     categories = posts.get_all_categories()
     filled = {"title": "", "description": "", "categories": []}
     return render_template("new_post.html", categories=categories, filled=filled)
-
 
 @app.route("/create_post", methods=["POST"])
 def create_post():
@@ -139,88 +148,6 @@ def create_post():
     posts.add_post(title, description, user_id, selected_categories, image)
 
     return redirect("/")
-
-@app.route("/image/<int:post_id>")
-def show_image(post_id):
-    image = posts.get_image(post_id)
-    if not image:
-        abort(404)
-
-    response = make_response(bytes(image))
-    response.headers.set("Content-Type", "image/jpeg")
-    return response
-
-@app.route("/create_comment", methods=["POST"])
-def create_comment():
-    require_login()
-    check_csrf()
-
-    post_id = request.form["post_id"]
-
-    post = posts.get_post(post_id)
-    if not post:
-        flash("No post was found")
-        return redirect("/")
-
-    comment = request.form["comment"].strip()
-    if not comment or len(comment) > 100:
-        flash("Comment has to be 1-100 characters")
-        return redirect("/post/" + str(post_id))
-
-    user_id = session["user_id"]
-    posts.add_comment(post_id, user_id, comment)
-
-    return redirect("/post/" + str(post_id))
-
-@app.route("/edit_comment/<int:comment_id>", methods=["GET", "POST"])
-def edit_comment(comment_id):
-    require_login()
-
-    comment = posts.get_comment(comment_id)
-    if not comment:
-        flash("No comment was found")
-        return redirect("/post/" + str(comment["post_id"]))
-
-    if comment["user_id"] != session["user_id"]:
-        flash("Unauthorized action!")
-        return redirect("/post/" + str(comment["post_id"]))
-
-    if request.method == "GET":
-        return render_template("edit_comment.html", comment=comment)
-
-    if request.method == "POST":
-        check_csrf()
-
-        content = request.form["content"].strip()
-        if not content or len(content) > 100:
-            flash("Comment has to be 1-100 characters")
-            return redirect("/post/" + str(comment["post_id"]))
-
-        posts.update_comment(comment["id"], content)
-        return redirect("/post/" + str(comment["post_id"]))
-
-@app.route("/remove_comment/<int:comment_id>", methods=["GET", "POST"])
-def remove_comment(comment_id):
-    require_login()
-
-    comment = posts.get_comment(comment_id)
-    if not comment:
-        flash("No comment was found")
-        return redirect("/post/" + str(comment["post_id"]))
-
-    if comment["user_id"] != session["user_id"]:
-        flash("Unauthorized action!")
-        return redirect("/post/" + str(comment["post_id"]))
-
-    if request.method == "GET":
-        return render_template("remove_comment.html", comment=comment)
-
-    if request.method == "POST":
-        check_csrf()
-
-        if "continue" in request.form:
-            posts.remove_comment(comment["id"])
-        return redirect("/post/" + str(comment["post_id"]))
 
 @app.route("/edit_post/<int:post_id>")
 def edit_post(post_id):
@@ -301,6 +228,77 @@ def remove_post(post_id):
 
         return redirect("/post/" + str(post_id))
 
+@app.route("/create_comment", methods=["POST"])
+def create_comment():
+    require_login()
+    check_csrf()
+
+    post_id = request.form["post_id"]
+
+    post = posts.get_post(post_id)
+    if not post:
+        flash("No post was found")
+        return redirect("/")
+
+    comment = request.form["comment"].strip()
+    if not comment or len(comment) > 100:
+        flash("Comment has to be 1-100 characters")
+        return redirect("/post/" + str(post_id))
+
+    user_id = session["user_id"]
+    posts.add_comment(post_id, user_id, comment)
+
+    return redirect("/post/" + str(post_id))
+
+@app.route("/edit_comment/<int:comment_id>", methods=["GET", "POST"])
+def edit_comment(comment_id):
+    require_login()
+
+    comment = posts.get_comment(comment_id)
+    if not comment:
+        flash("No comment was found")
+        return redirect("/post/" + str(comment["post_id"]))
+
+    if comment["user_id"] != session["user_id"]:
+        flash("Unauthorized action!")
+        return redirect("/post/" + str(comment["post_id"]))
+
+    if request.method == "GET":
+        return render_template("edit_comment.html", comment=comment)
+
+    if request.method == "POST":
+        check_csrf()
+
+        content = request.form["content"].strip()
+        if not content or len(content) > 100:
+            flash("Comment has to be 1-100 characters")
+            return redirect("/post/" + str(comment["post_id"]))
+
+        posts.update_comment(comment["id"], content)
+        return redirect("/post/" + str(comment["post_id"]))
+
+@app.route("/remove_comment/<int:comment_id>", methods=["GET", "POST"])
+def remove_comment(comment_id):
+    require_login()
+
+    comment = posts.get_comment(comment_id)
+    if not comment:
+        flash("No comment was found")
+        return redirect("/post/" + str(comment["post_id"]))
+
+    if comment["user_id"] != session["user_id"]:
+        flash("Unauthorized action!")
+        return redirect("/post/" + str(comment["post_id"]))
+
+    if request.method == "GET":
+        return render_template("remove_comment.html", comment=comment)
+
+    if request.method == "POST":
+        check_csrf()
+
+        if "continue" in request.form:
+            posts.remove_comment(comment["id"])
+        return redirect("/post/" + str(comment["post_id"]))
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -356,7 +354,6 @@ def register():
 
         flash("Account created")
         return redirect("/login?username=" + username)
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

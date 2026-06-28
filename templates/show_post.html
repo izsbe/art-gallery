@@ -56,6 +56,9 @@
   {% endfor %}
 
   {% if session.user_id %}
+    {% if not comments %}
+      <h1>Start a discussion</h1>
+    {% endif %}
   <form action="/create_comment" method="post">
     Add a comment: <br />
     <textarea name="comment" rows="4" cols="40" maxlength="100" required></textarea>

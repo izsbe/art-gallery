@@ -1,6 +1,11 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 
+def create_user(username, password1):
+    password_hash = generate_password_hash(password1)
+    sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
+    db.execute(sql, [username, password_hash])
+
 def get_user(user_id):
     sql = "SELECT id, username FROM users WHERE id = ?"
     result = db.query(sql, [user_id])
@@ -15,11 +20,6 @@ def count_comments(user_id):
     result = db.query(sql, [user_id])
     return result[0]["comment_count"] if result else 0
 
-def create_user(username, password1):
-    password_hash = generate_password_hash(password1)
-    sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-    db.execute(sql, [username, password_hash])
-
 def check_login(username, password):
     sql = "SELECT id, password_hash FROM users WHERE username = ?"
     result = db.query(sql, [username])
@@ -29,5 +29,4 @@ def check_login(username, password):
     password_hash = result[0]["password_hash"]
     if check_password_hash(password_hash, password):
         return user_id
-    else:
-        return None
+    return None

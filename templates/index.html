@@ -9,28 +9,26 @@
   <h1>Art gallery</h1>
 
   {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
+  <p>
+    <b>{{ message }}</b>
+  </p>
   {% endfor %}
 
-  {% if session.username %}
+  {% if session.user_id %}
   <p>
-    Signed in as <a href="/user/{{ session.user_id }}">{{ session.username }}</a> |
-    <a href="/logout">Sign out</a>
-  </p>
-  <p>
-    <a href="/new_post">New post</a>
-  </p>
-  {% else %}
-  <p>
-    <a href="/login">Sign in</a> /
-    <a href="/register">Sign up</a>
+    Signed in as <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
   </p>
   {% endif %}
 
   <p>
-    <a href="/find_post">Search</a>
+    <a href="/find_post">Search post</a> |
+  {% if session.user_id %}
+    <a href="/new_post">New post</a> |
+    <a href="/logout">Sign out</a>
+  {% else %}
+    <a href="/login">Sign in</a> |
+    <a href="/register">Sign up</a>
+  {% endif %}
   </p>
 
   <h2>Posts</h2>

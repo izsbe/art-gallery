@@ -33,7 +33,9 @@
   </p>
   {% endif %}
 
+  {% if comments %}
   <h1>Discussion</h1>
+  {% endif %}
 
   {% for comment in comments %}
     <p>
@@ -53,6 +55,7 @@
     <hr />
   {% endfor %}
 
+  {% if session.user_id %}
   <form action="/create_comment" method="post">
     Add a comment: <br />
     <textarea name="comment" rows="4" cols="40" maxlength="100" required></textarea>
@@ -60,4 +63,5 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Comment" />
   </form>
+  {% endif %}
 {% endblock %}

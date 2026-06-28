@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Sign up</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
+{% block content %}
+  <h2>Sign up</h2>
   <form action="/register" method="post">
     <p>
       Username: <br />
@@ -21,13 +19,6 @@
       Confirm password: <br />
       <input type="password" name="password2" minlength="8" maxlength="30" pattern="^\S+$" required/>
     </p>
-    {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-    {% endfor %}
     <input type="submit" value="Sign up" />
   </form>
-</body>
-
-</html>
+{% endblock %}

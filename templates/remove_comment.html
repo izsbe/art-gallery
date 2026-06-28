@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Delete comment</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
+{% block content %}
+  <h2>Delete comment</h2>
   <form action="/remove_comment/{{ comment.id }}" method="post">
     <p>
       "{{ comment.content }}" <br />
@@ -15,6 +13,4 @@
     <input type="submit" name="continue" value="Delete" />
     <input type="submit" name="cancel" value="Cancel" />
   </form>
-
-</body>
-</html>
+{% endblock %}

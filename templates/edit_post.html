@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Edit Post</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
-  <h1>Edit post</h1>
-  {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-  {% endfor %}
+{% block content %}
+  <h2>Edit post</h2>
   <form action="/update_post" method="post">
     <p>
       Title: <br />
@@ -46,6 +38,4 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Update Post" />
   </form>
-</body>
-
-</html>
+{% endblock %}

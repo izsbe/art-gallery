@@ -1,28 +1,16 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>{{ post.title }}</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
-  {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-  {% endfor %}
-  <h1>{{ post.title }}</h1>
-  {% if session.user_id == post.user_id %}
-  <p>
-    <a href="/edit_post/{{ post.id }}">Edit</a>
-    <a href="/remove_post/{{ post.id }}">Remove</a>
-  </p>
-  {% endif %}
+{% block content %}
   <p>
     Posted by: <a href="/user/{{post.user_id}}">{{ post.username }}</a> <br />
     ({{ post.created_at }})
   </p>
+
   <img src="/image/{{ post.id }}" width="500"/>
+
+  <h2>{{ post.title }}</h2>
   <p>
     {{ post.description }}
   </p>
@@ -38,7 +26,14 @@
   </ul>
   {% endif %}
 
-  <h2>Discussion</h2>
+  {% if session.user_id == post.user_id %}
+  <p>
+    <a href="/edit_post/{{ post.id }}">Edit</a> |
+    <a href="/remove_post/{{ post.id }}">Remove</a>
+  </p>
+  {% endif %}
+
+  <h1>Discussion</h1>
 
   {% for comment in comments %}
     <p>
@@ -65,9 +60,4 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Comment" />
   </form>
-  <p>
-    <a href="/">Back</a>
-  </p>
-</body>
-
-</html>
+{% endblock %}

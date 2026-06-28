@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Remove Post</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
-  <h1>Remove post</h1>
+{% block content %}
+  <h2>Remove post</h2>
   <p>Remove "{{ post.title }}"?</p>
   <form action="/remove_post/{{ post.id }}" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
@@ -16,6 +13,4 @@
   <p>
     <a href="/">Front page</a>
   </p>
-</body>
-
-</html>
+{% endblock %}

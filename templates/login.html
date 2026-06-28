@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Sign in</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
-  {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-  {% endfor %}
+{% block content %}
+  <h2>Sign in</h2>
   {% if session.username %}
   <p>
     Signed in as {{ session.username }}
@@ -31,6 +24,4 @@
     <input type="submit" value="Sign in" />
   </form>
   {% endif %}
-</body>
-
-</html>
+{% endblock %}

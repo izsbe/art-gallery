@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>New post</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
-  <h1>New post</h1>
+{% block content %}
+  <h2>New post</h2>
   <form action="/create_post" method="post" enctype="multipart/form-data">
     <p>
       Title: <br />
@@ -37,9 +34,4 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Post artwork" />
   </form>
-  <p>
-    <a href="/">Back</a>
-  </p>
-</body>
-
-</html>
+{% endblock %}

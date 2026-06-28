@@ -1,36 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Art gallery</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
-  <h1>Art gallery</h1>
-
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
-
-  {% if session.user_id %}
-  <p>
-    Signed in as <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
-  </p>
-  {% endif %}
-
-  <p>
-    <a href="/find_post">Search post</a> |
-  {% if session.user_id %}
-    <a href="/new_post">New post</a> |
-    <a href="/logout">Sign out</a>
-  {% else %}
-    <a href="/login">Sign in</a> |
-    <a href="/register">Sign up</a>
-  {% endif %}
-  </p>
-
+{% block content %}
   <h2>Posts</h2>
 
   <ul>
@@ -38,6 +10,4 @@
     <li><a href="/post/{{ post.id }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
-</body>
-
-</html>
+{% endblock %}

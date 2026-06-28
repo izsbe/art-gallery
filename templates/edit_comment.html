@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Edit comment</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
+{% block content %}
+  <h2>Edit comment</h2>
   <form action="/edit_comment/{{ comment.id }}" method="post">
       <p>
         Comment:<br />
@@ -14,6 +12,4 @@
       </p>
       <input type="submit" value="Save changes" />
   </form>
-</body>
-
-</html>
+{% endblock %}

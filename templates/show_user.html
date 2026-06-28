@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Userpage for {{ user.username }}</title>
-</head>
+{% block title %}Art gallery{% endblock %}
 
-<body>
-  <h1>Userpage for {{ user.username }}</h1>
+{% block content %}
+  <h2>Userpage for {{ user.username }}</h2>
   <p>
     User has {{ posts | count }} posts and {{ comments }} comments
   </p>
@@ -16,9 +13,4 @@
     <li><a href="/post/{{ post.id }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
-  <p>
-    <a href="/">Back</a>
-  </p>
-</body>
-
-</html>
+{% endblock %}

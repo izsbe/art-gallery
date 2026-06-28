@@ -12,7 +12,7 @@
 
   <h2>{{ post.title }}</h2>
   <p>
-    {{ post.description }}
+    {{ post.description | show_lines }}
   </p>
 
   {% if categories %}
@@ -42,7 +42,7 @@
       <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.created_at }}):
     </p>
     <p>
-      {{ comment.content }}
+      {{ comment.content | show_lines }}
     </p>
 
     {% if comment.user_id == session.user_id %}

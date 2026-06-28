@@ -6,15 +6,15 @@
   <h2>New post</h2>
   <form action="/create_post" method="post" enctype="multipart/form-data">
     <p>
-      Title: <br />
-      <input type="text" name="title" value="{{ filled.title }}" maxlength="50" required/>
+      <label for="title">Title</label>:<br />
+      <input id="title" type="text" name="title" value="{{ filled.title }}" maxlength="50" required/>
     </p>
     <p>
       Artwork image: <input type="file" name="image" accept=".jpg, jpeg" />
     </p>
     <p>
-      Description: <br />
-      <textarea name="description" rows="6" cols="60" maxlength="1000"
+      <label for="description">Description</label>:<br />
+      <textarea id="description" name="description" rows="5" cols="50" maxlength="1000"
       required>{{ filled.description }}</textarea>
     </p>
 

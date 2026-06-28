@@ -6,18 +6,21 @@
   <h2>Sign up</h2>
   <form action="/register" method="post">
     <p>
-      Username: <br />
-      <input type="text" name="username" value="{{ filled.username }}" maxlength="16" pattern="^\S+$" required/>
+      <label for="username">Username</label>:<br />
+      <input id="username" type="text" name="username" value="{{ filled.username }}"
+      maxlength="16" pattern="^\S+$" required/><br />
       (Username cannot be longer than 16 characters or contain spaces)
     </p>
     <p>
-      Password: <br />
-      <input type="password" name="password1" minlength="8" maxlength="30" pattern="^\S+$" required/>
+      <label for="password1">Password</label>:<br />
+      <input id="password1" type="password" name="password1"
+      minlength="8" maxlength="30" pattern="^\S+$" required/><br />
       (Password must be 8-30 characters long and cannot contain spaces)
     </p>
     <p>
-      Confirm password: <br />
-      <input type="password" name="password2" minlength="8" maxlength="30" pattern="^\S+$" required/>
+      <label for="password2">Password</label>:<br />
+      <input id="password2" type="password" name="password2"
+      minlength="8" maxlength="30" pattern="^\S+$" required/>
     </p>
     <input type="submit" value="Sign up" />
   </form>

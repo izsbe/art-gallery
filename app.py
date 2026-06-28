@@ -1,15 +1,21 @@
+import re
 import secrets
 import sqlite3
+
 from flask import Flask
-from flask import abort, redirect, render_template, request, session, make_response, flash
+from flask import abort, flash, make_response, redirect, render_template, request, session
+import markupsafe
+
 import config
-#import db
 import posts
 import users
-import re
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+def require_login():
+    if "user_id" not in session:
+        abort(403)
 
 def check_csrf():
     if "csrf_token" not in request.form:
@@ -17,9 +23,11 @@ def check_csrf():
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
-def require_login():
-    if "user_id" not in session:
-        abort(403)
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 @app.route("/")
 def index():
@@ -319,7 +327,7 @@ def register():
         password1 = request.form["password1"]
 
         if not password1 or len(password1) > 30 or len(password1) < 8:
-            flash("Password does not match requirements")
+            flash("Password has to be 8-30 characters")
             return render_template("register.html", filled=filled)
 
         if not re.search(r'^\S+$', password1):
@@ -329,7 +337,7 @@ def register():
         password2 = request.form["password2"]
 
         if not password2 or len(password2) > 30 or len(password2) < 8:
-            flash("Password does not match requirements")
+            flash("Password has to be 8-30 characters")
             return render_template("register.html", filled=filled)
 
         if not re.search(r'^\S+$', password2):
@@ -337,13 +345,13 @@ def register():
             return render_template("register.html", filled=filled)
 
         if password1 != password2:
-            flash("ERROR: Passwords do not match")
+            flash("Passwords do not match")
             return render_template("register.html", filled=filled)
 
         try:
             users.create_user(username, password1)
         except sqlite3.IntegrityError:
-            flash("ERROR: Username is already taken")
+            flash("Username is already taken")
             return render_template("register.html", filled={})
 
         flash("Account created")

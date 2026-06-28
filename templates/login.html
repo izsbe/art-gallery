@@ -14,12 +14,14 @@
   {% else %}
   <form action="/login" method="post">
     <p>
-      Username: <br />
-      <input type="text" name="username" value="{{ filled.username }}" maxlength="16" pattern="^\S+$" required/>
+      <label for="username">Username</label>:<br />
+      <input id="username" type="text" name="username" value="{{ filled.username }}"
+      maxlength="16" pattern="^\S+$" required/>
     </p>
     <p>
-      Password: <br />
-      <input type="password" name="password" minlength="8" maxlength="30" pattern="^\S+$" required/>
+      <label for="password">Password</label>:<br />
+      <input id="password" type="password" name="password"
+      minlength="8" maxlength="30" pattern="^\S+$" required/>
     </p>
     <input type="submit" value="Sign in" />
   </form>

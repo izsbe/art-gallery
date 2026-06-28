@@ -10,14 +10,15 @@
   <form action="/create_post" method="post" enctype="multipart/form-data">
     <p>
       Title: <br />
-      <input type="text" name="title" maxlength="50" required/>
+      <input type="text" name="title" value="{{ filled.title }}" maxlength="50" required/>
     </p>
     <p>
       Artwork image: <input type="file" name="image" accept=".jpg, jpeg" />
     </p>
     <p>
       Description: <br />
-      <textarea name="description" rows="6" cols="60" maxlength="1000" required></textarea>
+      <textarea name="description" rows="6" cols="60" maxlength="1000"
+      required>{{ filled.description }}</textarea>
     </p>
 
     <p>
@@ -27,7 +28,8 @@
           <input
             type="checkbox"
             name="categories"
-            value="{{ category.id }}">
+            value="{{ category.id }}"
+            {% if category.id|string in filled.categories %}checked{% endif %}>
           {{ category.name }}
         </label><br>
       {% endfor %}

@@ -1,3 +1,4 @@
+import secrets
 import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, request, session, make_response, flash
@@ -5,13 +6,14 @@ import config
 #import db
 import posts
 import users
-import secrets
 import re
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
 def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
@@ -28,7 +30,8 @@ def index():
 def show_user(user_id):
     user = users.get_user(user_id)
     if not user:
-        abort(404)
+        flash("No user found")
+        return redirect("/")
     posts = users.get_posts(user_id)
     comments = users.count_comments(user_id)
     return render_template("show_user.html", user=user, posts=posts, comments=comments)
@@ -40,7 +43,12 @@ def find_post():
     categories = posts.get_all_categories()
 
     if len(query_word) > 30:
-            abort(403)
+        flash("Search query cannot exceed 30 characters")
+        return render_template("find_post.html",
+                           query_word=query_word,
+                           query_category=query_category,
+                           categories=categories,
+                           results=[])
 
     if query_word or query_category:
         results = posts.find_posts(query_word, query_category)
@@ -57,7 +65,9 @@ def find_post():
 def show_post(post_id):
     post = posts.get_post(post_id)
     if not post:
-        abort(404)
+        flash("No post was found")
+        return redirect("/")
+
     categories = posts.get_categories(post_id)
     comments = posts.get_comments(post_id)
     return render_template("show_post.html", post=post, categories=categories, comments=comments)
@@ -66,7 +76,8 @@ def show_post(post_id):
 def new_post():
     require_login()
     categories = posts.get_all_categories()
-    return render_template("new_post.html", categories=categories)
+    filled = {"title": "", "description": "", "categories": []}
+    return render_template("new_post.html", categories=categories, filled=filled)
 
 
 @app.route("/create_post", methods=["POST"])
@@ -74,26 +85,46 @@ def create_post():
     require_login()
     check_csrf()
 
-    title = request.form["title"]
+    title = request.form["title"].strip()
+    description = request.form["description"].strip()
+    selected_categories = request.form.getlist("categories")
+
+    filled = {"title": title, "description": description, "categories": selected_categories}
+
+    categories = posts.get_all_categories()
+
     if not title or len(title) > 50:
-        abort(403)
+        flash("Title has to be 1-50 characters")
+        return render_template("new_post.html",
+                               categories=categories,
+                               filled=filled)
 
     file = request.files["image"]
     filename = file.filename.lower()
     if not (filename.endswith(".jpg") or filename.endswith(".jpeg")):
-        return "ERROR: wrong file type"
+        flash("Wrong file type")
+        return render_template("new_post.html",
+                               categories=categories,
+                               filled=filled)
 
     image = file.read()
     if len(image) > 100 * 1024:
-        return "ERROR: image is too large"
+        flash("Image is too large")
+        return render_template("new_post.html",
+                               categories=categories,
+                               filled=filled)
 
-    description = request.form["description"]
     if not description or len(description) > 1000:
-        abort(403)
+        flash("Description has to be 1-1000 characters")
+        return render_template("new_post.html",
+                               categories=categories,
+                               filled=filled)
 
-    selected_categories = request.form.getlist("categories")
     if not selected_categories:
-        abort(403)
+        flash("Please select at least one category")
+        return render_template("new_post.html",
+                               categories=categories,
+                               filled=filled)
 
     user_id = session["user_id"]
 
@@ -116,15 +147,19 @@ def create_comment():
     require_login()
     check_csrf()
 
-    comment = request.form["comment"]
-    if not comment or len(comment) > 100:
-        abort(403)
     post_id = request.form["post_id"]
+
     post = posts.get_post(post_id)
     if not post:
-        abort(404)
-    user_id = session["user_id"]
+        flash("No post was found")
+        return redirect("/")
 
+    comment = request.form["comment"].strip()
+    if not comment or len(comment) > 100:
+        flash("Comment has to be 1-100 characters")
+        return redirect("/post/" + str(post_id))
+
+    user_id = session["user_id"]
     posts.add_comment(post_id, user_id, comment)
 
     return redirect("/post/" + str(post_id))
@@ -135,9 +170,12 @@ def edit_comment(comment_id):
 
     comment = posts.get_comment(comment_id)
     if not comment:
-        abort(404)
+        flash("No comment was found")
+        return redirect("/post/" + str(comment["post_id"]))
+
     if comment["user_id"] != session["user_id"]:
-        abort(403)
+        flash("Unauthorized action!")
+        return redirect("/post/" + str(comment["post_id"]))
 
     if request.method == "GET":
         return render_template("edit_comment.html", comment=comment)
@@ -145,9 +183,10 @@ def edit_comment(comment_id):
     if request.method == "POST":
         check_csrf()
 
-        content = request.form["content"]
-        if not comment or len(comment) > 100:
-            abort(403)
+        content = request.form["content"].strip()
+        if not content or len(content) > 100:
+            flash("Comment has to be 1-100 characters")
+            return redirect("/post/" + str(comment["post_id"]))
 
         posts.update_comment(comment["id"], content)
         return redirect("/post/" + str(comment["post_id"]))
@@ -158,9 +197,12 @@ def remove_comment(comment_id):
 
     comment = posts.get_comment(comment_id)
     if not comment:
-        abort(404)
+        flash("No comment was found")
+        return redirect("/post/" + str(comment["post_id"]))
+
     if comment["user_id"] != session["user_id"]:
-        abort(403)
+        flash("Unauthorized action!")
+        return redirect("/post/" + str(comment["post_id"]))
 
     if request.method == "GET":
         return render_template("remove_comment.html", comment=comment)
@@ -177,9 +219,11 @@ def edit_post(post_id):
     require_login()
     post = posts.get_post(post_id)
     if not post:
-        abort(404)
+        flash("No post was found")
+        return redirect("/")
     if post["user_id"] != session["user_id"]:
-        abort(403)
+        flash("Unauthorized action!")
+        return redirect("/")
 
     selected_categories = posts.get_categories(post_id)
     all_categories = posts.get_all_categories()
@@ -199,27 +243,28 @@ def update_post():
     post_id = request.form["post_id"]
     post = posts.get_post(post_id)
     if not post:
-        abort(404)
+        flash("No post was found")
+        return redirect("/")
     if post["user_id"] != session["user_id"]:
-        abort(403)
+        flash("Unauthorized action!")
+        return redirect("/")
 
-    title = request.form["title"]
+    title = request.form["title"].strip()
     if not title or len(title) > 50:
-        abort(403)
-    description = request.form["description"]
+        flash("Title has to be 1-50 characters")
+        return redirect("/edit_post/" + str(post_id))
+
+    description = request.form["description"].strip()
     if not description or len(description) > 1000:
-        abort(403)
+        flash("Description has to be 1-1000 characters")
+        return redirect("/edit_post/" + str(post_id))
 
     selected_categories = request.form.getlist("categories")
     if not selected_categories:
-        abort(403)
+        flash("Please select at least one category")
+        return redirect("/edit_post/" + str(post_id))
 
-    posts.update_post(
-        post_id,
-        title,
-        description,
-        selected_categories
-        )
+    posts.update_post(post_id, title, description, selected_categories)
 
     return redirect("/post/" + str(post_id))
 
@@ -229,10 +274,12 @@ def remove_post(post_id):
 
     post = posts.get_post(post_id)
     if not post:
-        abort(404)
+        flash("No post was found")
+        return redirect("/")
 
     if post["user_id"] != session["user_id"]:
-        abort(403)
+        flash("Unauthorized action!")
+        return redirect("/")
 
     if request.method == "GET":
         return render_template("remove_post.html", post=post)
@@ -322,8 +369,7 @@ def login():
             return redirect("/")
         else:
             flash("Incorrect username or/and password")
-            filled = {"username": username}
-            return render_template("login.html", filled=filled)
+            return render_template("login.html", filled={})
 
 @app.route("/logout")
 def logout():

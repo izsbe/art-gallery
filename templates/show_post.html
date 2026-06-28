@@ -6,6 +6,11 @@
 </head>
 
 <body>
+  {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+  {% endfor %}
   <h1>{{ post.title }}</h1>
   {% if session.user_id == post.user_id %}
   <p>

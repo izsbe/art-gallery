@@ -7,7 +7,7 @@
   <form action="/edit_comment/{{ comment.id }}" method="post">
       <p>
         <label for="content">Comment</label>:<br />
-        <textarea id="content" name="content" rows="4" cols="40">{{ comment.content }}</textarea>
+        <textarea id="content" name="content" rows="4" cols="40" required>{{ comment.content }}</textarea>
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       </p>
       <input type="submit" value="Save changes" />

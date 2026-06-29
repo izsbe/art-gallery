@@ -35,8 +35,11 @@ def show_user(user_id):
         flash("No user found")
         return redirect("/")
     posts = users.get_posts(user_id)
+    post_count = len(posts)
     comments = users.count_comments(user_id)
-    return render_template("show_user.html", user=user, posts=posts, comments=comments)
+
+    return render_template("show_user.html", user=user, posts=posts,
+                           post_count=post_count, comments=comments)
 
 @app.template_filter()
 def show_lines(content):
